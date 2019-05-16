@@ -1,6 +1,9 @@
 workflow "New workflow" {
+  resolves = [
+    "GitHub Action for Docker",
+    "GitHub Action for Docker-1",
+  ]
   on = "push"
-  resolves = ["GitHub Action for Docker"]
 }
 
 action "build docker image" {
@@ -15,7 +18,15 @@ action "Docker Login" {
 
 action "GitHub Action for Docker" {
   uses = "actions/docker/cli@8cdf801b322af5f369e00d85e9cf3a7122f49108"
-  needs = ["Docker Login"]
+  needs = [
+    "Docker Login",
+    "GitHub Action for Docker-1",
+  ]
   secrets = ["DOCKER_PASSWORD", "DOCKER_USERNAME"]
-  args = "push debianmaster/locust"
+  args = "push debianmaster/locust:latest"
+}
+
+action "GitHub Action for Docker-1" {
+  uses = "actions/docker/cli@8cdf801b322af5f369e00d85e9cf3a7122f49108"
+  args = "build -t debianmaster/locust:latest ."
 }
